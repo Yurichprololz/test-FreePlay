@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "task1" : "npx live-server --open=task-1/index.html",
+    "task2": "jest"
   },
   "repository": {
     "type": "git",
