@@ -4,6 +4,7 @@ class ArrayList {
   set(key, value) {
     const obj = this.#getObject(key, value)
     this.#storage.push(obj)
+    return this.#storage
   }
 
   has(key) {
@@ -31,7 +32,11 @@ class ArrayList {
   }
 
   remove(key) {
-    const index = this.#storage.findIndex((el) => el.key === key);
+    const obj = this.get(key)
+    if (obj) {
+      this.#storage.splice(obj.index, 1)
+      this.#setCorrectIndex()
+    }
     return this.#storage;
   }
 
@@ -47,7 +52,7 @@ class ArrayList {
   union(...maps) {
     maps.forEach((map) => {
       for (let i = 0; i < map.size(); i++) {
-        const obj = map.getByIndex(0)
+        const obj = map.getByIndex(i)
         this.set(obj.key, obj.value)
       }
     })
@@ -65,9 +70,7 @@ class ArrayList {
 
   setTo(index, key, value) {
     this.#storage.splice(index + 1, 0, this.#getObject(key, value))
-    this.#storage = this.#storage.map((el, ind) => {     // sets object correct index
-      return { key: el.key, value: el.value, index: ind }
-    })
+    this.#setCorrectIndex()
     return this.#storage;
   }
 
@@ -79,6 +82,16 @@ class ArrayList {
   #getObject(key, value) {
     return { key, value, index: this.size() }
   }
+
+  #setCorrectIndex(){
+    this.#storage = this.#storage.map((el, ind) => {     
+      return { key: el.key, value: el.value, index: ind }
+    })
+  }
 }
 
-export { ArrayList };
+
+const list = new ArrayList()
+console.log(list.set('Anna', 'QA'))
+
+module.exports = { ArrayList };
