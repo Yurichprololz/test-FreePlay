@@ -8,14 +8,6 @@ const getDate = (duration) => {
   return [now, now + duration]
 }
 
-const getVector = (from, to) => {
-  const [x1, y1] = from;
-  const [x2, y2] = to;
-  const catX = Math.pow(x2 - x1, 2)
-  const catY = Math.pow(y2 - y1, 2)
-  return Math.floor(Math.sqrt(catX + catY))
-}
-
 const getEndPoints = (x1, y1, to) => {
   let [x2, y2] = to;
   const endXPoint = x2 - x1
@@ -37,4 +29,18 @@ const parseCoords = (string) => {
   return [parseInt(x), parseInt(y)]
 }
 
-export { getDate, getPassedTimeByPercent, getEndPoints, parseTransform }
+const timeFractionWithBraking = (time) => {
+  return 1 - Math.sin(Math.acos(time))
+}
+const makeEaseInOut = (timing) => {
+  return function (timeFraction) {
+    if (timeFraction < .5)
+      return timing(2 * timeFraction) / 2;
+    else
+      return (2 - timing(2 * (1 - timeFraction))) / 2;
+  }
+}
+
+const brakingWithEaseInOut = makeEaseInOut(timeFractionWithBraking)
+
+export { getDate, getPassedTimeByPercent, getEndPoints, parseTransform, brakingWithEaseInOut }

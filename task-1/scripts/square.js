@@ -1,4 +1,5 @@
-import { getDate, getEndPoints, getPassedTimeByPercent, parseTransform } from './helpers.js'
+import { getDate, getEndPoints, getPassedTimeByPercent, parseTransform, brakingWithEaseInOut } from './helpers.js'
+import { SPEED_UP_BRAKING_TIMING } from './varible.js'
 
 //There's the element is rendering 
 const create = () => {
@@ -9,9 +10,10 @@ const create = () => {
   return [0, 0]
 }
 
-const moveTo = (from, to, duration) => {
+const moveTo = (from, to, duration, timing = false) => {
   const element = document.querySelector('.square')
   const { rotate } = parseTransform(element.style.transform)
+  
   return new Promise((res) => {
     let [x1, y1] = from;
     const [endXPoint, endYPoint] = getEndPoints(x1, y1, to)
@@ -21,16 +23,21 @@ const moveTo = (from, to, duration) => {
     let requestId = requestAnimationFrame(animate);
 
     function animate() {
-      const passedTimeByPercent = getPassedTimeByPercent(start, duration)
-      const x = Math.floor(x1 + endXPoint * passedTimeByPercent);
-      const y = Math.floor(y1 + endYPoint * passedTimeByPercent);
+      let timeFraction = getPassedTimeByPercent(start, duration)
+
+      if (timing && timing === SPEED_UP_BRAKING_TIMING) {
+        timeFraction = brakingWithEaseInOut(timeFraction)
+      }
+
+      const x = Math.floor(x1 + endXPoint * timeFraction);
+      const y = Math.floor(y1 + endYPoint * timeFraction);
       element.style.transform = `translate(${x}px, ${y}px) ${rotate || ''}`;
 
       requestId = requestAnimationFrame(animate);
 
       if (finish < Date.now()) {
         cancelAnimationFrame(requestId);
-        // so I return coords 'cause requestAnimationFrame returns ID
+        // I return coords so 'cause requestAnimationFrame returns ID
         res([x, y])
       }
     }
@@ -52,8 +59,8 @@ const rotate = (x, y, z, deg, duration) => {
     let requestId = requestAnimationFrame(animate);
 
     function animate() {
-      const passedTimeByPercent = getPassedTimeByPercent(start, duration)
-      const currentDeg = Math.floor(deg * passedTimeByPercent)
+      const timeFraction = getPassedTimeByPercent(start, duration)
+      const currentDeg = Math.floor(deg * timeFraction)
       element.style.transform = `${translate || ''} rotate3d(${x}, ${y}, ${z}, ${currentDeg}deg)`;
 
       requestId = requestAnimationFrame(animate);
@@ -68,4 +75,9 @@ const rotate = (x, y, z, deg, duration) => {
   })
 }
 
-export { create, moveTo, rotate }
+const moveToWithSpeedUp = (from, to, duration) => {
+  return moveTo(from, to, duration, SPEED_UP_BRAKING_TIMING)
+    .then((data) => data)
+}
+
+export { create, moveTo, rotate, moveToWithSpeedUp }
