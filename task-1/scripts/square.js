@@ -7,7 +7,7 @@ const create = () => {
   const sq = document.createElement('div')
   sq.classList.add('square')
   body.append(sq)
-  return [0, 0]
+  return [0, 0, 0]
 }
 
 const moveTo = (from, to, duration, timing = false) => {
@@ -15,8 +15,8 @@ const moveTo = (from, to, duration, timing = false) => {
   const { rotate } = parseTransform(element.style.transform)
   
   return new Promise((res) => {
-    let [x1, y1] = from;
-    const [endXPoint, endYPoint] = getEndPoints(x1, y1, to)
+    let [x1, y1, z1] = from;
+    const [endXPoint, endYPoint, endZPoint] = getEndPoints(x1, y1, z1, to)
     const [start, finish] = getDate(duration)
 
     //I've chosen requestAnimationFrame 'cause it better for rendering elements
@@ -31,14 +31,15 @@ const moveTo = (from, to, duration, timing = false) => {
 
       const x = Math.floor(x1 + endXPoint * timeFraction);
       const y = Math.floor(y1 + endYPoint * timeFraction);
-      element.style.transform = `translate(${x}px, ${y}px) ${rotate || ''}`;
+      const z = Math.floor(z1 + endZPoint * timeFraction);
+      element.style.transform = `perspective(800px) translate3d(${x}px, ${y}px, ${z}px) ${rotate || ''}`;
 
       requestId = requestAnimationFrame(animate);
 
       if (finish < Date.now()) {
         cancelAnimationFrame(requestId);
         // I return coords so 'cause requestAnimationFrame returns ID
-        res([x, y])
+        res([x, y, z])
       }
     }
 
@@ -61,13 +62,13 @@ const rotate = (x, y, z, deg, duration) => {
     function animate() {
       const timeFraction = getPassedTimeByPercent(start, duration)
       const currentDeg = Math.floor(deg * timeFraction)
-      element.style.transform = `${translate || ''} rotate3d(${x}, ${y}, ${z}, ${currentDeg}deg)`;
+      element.style.transform = `perspective(800px) ${translate || ''} rotate3d(${x}, ${y}, ${z}, ${currentDeg}deg)`;
 
       requestId = requestAnimationFrame(animate);
 
       if (finish < Date.now()) {
         cancelAnimationFrame(requestId);
-        res(coords || [0, 0])
+        res(coords || [0, 0, 0])
       }
     }
 
