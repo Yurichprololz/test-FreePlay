@@ -90,8 +90,4 @@ class ArrayList {
   }
 }
 
-
-const list = new ArrayList()
-console.log(list.set('Anna', 'QA'))
-
 module.exports = { ArrayList };
