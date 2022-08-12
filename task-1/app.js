@@ -1,5 +1,5 @@
-import { getDate, getEndPoints, getPassedTimeByPercent, parseTransform, brakingWithEaseInOut } from './helpers.js'
-import { SPEED_UP_BRAKING_TIMING } from './varible.js'
+import { getDate, getEndPoints, getPassedTimeByPercent, parseTransform, brakingWithEaseInOut, parseCoords } from './scripts/helpers.js'
+import { SPEED_UP_BRAKING_TIMING } from './scripts/varible.js'
 
 //There's the element is rendering 
 const create = () => {
@@ -13,7 +13,7 @@ const create = () => {
 const moveTo = (from, to, duration, timing = false) => {
   const element = document.querySelector('.square')
   const { rotate } = parseTransform(element.style.transform)
-  
+
   return new Promise((res) => {
     let [x1, y1, z1] = from;
     const [endXPoint, endYPoint, endZPoint] = getEndPoints(x1, y1, z1, to)

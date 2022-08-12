@@ -1,18 +1,18 @@
-import * as Square from './scripts/square.js';
+import * as Element_API from './app.js';
 
 
-(async function () {
-  let pos = Square.create()
-  pos = await Square.moveToWithSpeedUp(pos, [100, 300, 200], 2000)
-    .then(async (data) => {
-      return await Square.moveTo(data, [300, 100, -500], 1500)
-    })
-    // .then(async (pos) => {
-    //  return await Square.rotate(1, 1, 1, 90, 2000)
-    // })
-    // .then(async (pos) => {
-    //   return await Square.moveTo(pos, [100, 300], 2000)
-    // })
-    
-  console.log(pos)
-})()
+let pos = Element_API.create()
+pos = Element_API.moveToWithSpeedUp(pos, [100, 300, 200], 2000)
+  .then((data) => {
+    return Element_API.moveTo(data, [300, 100, -500], 1500)
+  })
+  .then((pos) => {
+    return Element_API.moveTo(pos, [100, 300, 300], 2000)
+  })
+  .then((pos) => {
+    return Element_API.rotate(1, 1, 1, 360, 1000)
+  })
+  .then((pos) => {
+    const screenWidth = window.screen.width
+    return Element_API.moveToWithSpeedUp(pos, [screenWidth, 300, -300], 2000)
+  })

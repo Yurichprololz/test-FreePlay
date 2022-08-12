@@ -1,7 +1,10 @@
 .square {
   width: 100px;
   height: 100px;
-  background-color: black;
-  border-bottom: 2px red solid;
-  border-top: 2px yellow solid;
+  background-image: url(./star.png);
+  background-size: contain;
+}
+
+body{
+  background-color: rgb(197, 197, 188);
 }
